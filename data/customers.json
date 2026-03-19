@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "María González",
+    "email": "maria.gonzalez@email.com",
+    "phone": "+52-555-1234",
+    "membership": "Premium",
+    "tickets": [101, 105]
+  },
+  {
+    "id": 2,
+    "name": "Carlos Rodríguez",
+    "email": "carlos.rodriguez@email.com",
+    "phone": "+52-555-5678",
+    "membership": "Basic",
+    "tickets": [102]
+  },
+  {
+    "id": 3,
+    "name": "Ana Martínez",
+    "email": "ana.martinez@email.com",
+    "phone": "+52-555-9012",
+    "membership": "Premium",
+    "tickets": [103, 104]
+  },
+  {
+    "id": 4,
+    "name": "Luis Hernández",
+    "email": "luis.hernandez@email.com",
+    "phone": "+52-555-3456",
+    "membership": "Standard",
+    "tickets": []
+  }
+]

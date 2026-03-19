@@ -1,0 +1,101 @@
+[
+  {
+    "id": 101,
+    "customer_id": 1,
+    "type": "support",
+    "subject": "No puedo iniciar sesión",
+    "status": "resolved",
+    "created_at": "2026-02-28",
+    "resolved_at": "2026-03-01"
+  },
+  {
+    "id": 102,
+    "customer_id": 2,
+    "type": "complaint",
+    "subject": "Producto llegó dañado",
+    "status": "in_progress",
+    "created_at": "2026-03-02",
+    "resolved_at": null
+  },
+  {
+    "id": 103,
+    "customer_id": 3,
+    "type": "support",
+    "subject": "Cómo cambiar mi contraseña",
+    "status": "resolved",
+    "created_at": "2026-02-25",
+    "resolved_at": "2026-02-25"
+  },
+  {
+    "id": 104,
+    "customer_id": 3,
+    "type": "recommendation",
+    "subject": "Busco laptop para diseño",
+    "status": "resolved",
+    "created_at": "2026-03-01",
+    "resolved_at": "2026-03-01"
+  },
+  {
+    "id": 105,
+    "customer_id": 1,
+    "type": "support",
+    "subject": "Error al procesar pago",
+    "status": "open",
+    "created_at": "2026-03-04",
+    "resolved_at": null
+  },
+  {
+    "id": 106,
+    "customer_id": 1,
+    "type": "support",
+    "subject": "Test ticket",
+    "status": "open",
+    "created_at": "2026-03-05",
+    "resolved_at": null
+  },
+  {
+    "id": 107,
+    "customer_id": 1,
+    "type": "complaint",
+    "subject": "Muy malo el servicio",
+    "status": "open",
+    "created_at": "2026-03-05",
+    "resolved_at": null
+  },
+  {
+    "id": 108,
+    "customer_id": 1,
+    "type": "support",
+    "subject": "Test ticket",
+    "status": "open",
+    "created_at": "2026-03-17",
+    "resolved_at": null
+  },
+  {
+    "id": 109,
+    "customer_id": 1,
+    "type": "complaint",
+    "subject": "Muy malo el servicio",
+    "status": "open",
+    "created_at": "2026-03-17",
+    "resolved_at": null
+  },
+  {
+    "id": 110,
+    "customer_id": 1,
+    "type": "support",
+    "subject": "Test ticket",
+    "status": "open",
+    "created_at": "2026-03-17",
+    "resolved_at": null
+  },
+  {
+    "id": 111,
+    "customer_id": 1,
+    "type": "complaint",
+    "subject": "Muy malo el servicio",
+    "status": "open",
+    "created_at": "2026-03-17",
+    "resolved_at": null
+  }
+]

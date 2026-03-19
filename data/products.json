@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Laptop Pro X",
+    "category": "Electrónica",
+    "price": 1299.99,
+    "stock": 15,
+    "description": "Laptop de alta gama con procesador i7, 16GB RAM, SSD 512GB"
+  },
+  {
+    "id": 2,
+    "name": "Mouse Inalámbrico",
+    "category": "Accesorios",
+    "price": 29.99,
+    "stock": 50,
+    "description": "Mouse ergonómico inalámbrico con 6 botones programables"
+  },
+  {
+    "id": 3,
+    "name": "Teclado Mecánico RGB",
+    "category": "Accesorios",
+    "price": 89.99,
+    "stock": 30,
+    "description": "Teclado mecánico con switches azules e iluminación RGB"
+  },
+  {
+    "id": 4,
+    "name": "Monitor 4K 27\"",
+    "category": "Electrónica",
+    "price": 449.99,
+    "stock": 10,
+    "description": "Monitor profesional 4K UHD con panel IPS"
+  },
+  {
+    "id": 5,
+    "name": "Auriculares Gaming",
+    "category": "Audio",
+    "price": 79.99,
+    "stock": 25,
+    "description": "Auriculares gaming con sonido surround 7.1 y micrófono"
+  },
+  {
+    "id": 6,
+    "name": "Webcam HD",
+    "category": "Accesorios",
+    "price": 59.99,
+    "stock": 20,
+    "description": "Webcam 1080p con enfoque automático y micrófono integrado"
+  }
+]

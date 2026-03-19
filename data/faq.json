@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "question": "¿Cómo cambio mi contraseña?",
+    "answer": "Puedes cambiar tu contraseña desde tu perfil: 1) Inicia sesión, 2) Ve a 'Mi Cuenta', 3) Selecciona 'Seguridad', 4) Haz clic en 'Cambiar contraseña' y sigue las instrucciones.",
+    "category": "cuenta"
+  },
+  {
+    "id": 2,
+    "question": "¿Cuáles son los métodos de pago aceptados?",
+    "answer": "Aceptamos tarjetas de crédito/débito (Visa, MasterCard, American Express), PayPal, transferencias bancarias y pago en efectivo en tiendas asociadas.",
+    "category": "pagos"
+  },
+  {
+    "id": 3,
+    "question": "¿Cuánto tarda el envío?",
+    "answer": "El envío estándar tarda 3-5 días hábiles. El envío express tarda 1-2 días hábiles. Los tiempos pueden variar según tu ubicación.",
+    "category": "envios"
+  },
+  {
+    "id": 4,
+    "question": "¿Puedo devolver un producto?",
+    "answer": "Sí, aceptamos devoluciones dentro de los 30 días posteriores a la compra. El producto debe estar en su empaque original y sin usar. Contacta a soporte para iniciar el proceso.",
+    "category": "devoluciones"
+  },
+  {
+    "id": 5,
+    "question": "¿Cómo rastreo mi pedido?",
+    "answer": "Una vez que tu pedido sea enviado, recibirás un email con el número de rastreo. También puedes ver el estado en 'Mis Pedidos' dentro de tu cuenta.",
+    "category": "envios"
+  },
+  {
+    "id": 6,
+    "question": "¿Tienen garantía los productos?",
+    "answer": "Todos nuestros productos tienen garantía del fabricante. La duración varía: electrónica (12 meses), accesorios (6 meses). Conserva tu factura para hacer válida la garantía.",
+    "category": "garantia"
+  },
+  {
+    "id": 7,
+    "question": "¿Cómo actualizo mi dirección de envío?",
+    "answer": "Ve a 'Mi Cuenta' > 'Direcciones' > 'Editar'. Puedes tener múltiples direcciones guardadas y seleccionar una durante el checkout.",
+    "category": "cuenta"
+  },
+  {
+    "id": 8,
+    "question": "¿Ofrecen descuentos para estudiantes?",
+    "answer": "Sí, ofrecemos 10% de descuento para estudiantes con credencial vigente. Regístrate en nuestro programa estudiantil para obtener tu código de descuento.",
+    "category": "promociones"
+  }
+]
