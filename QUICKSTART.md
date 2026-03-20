@@ -20,9 +20,18 @@ source venv/bin/activate
 
 # Instalar dependencias
 pip install -r requirements.txt
+
+# (Opcional para desarrollo y testing)
+pip install -r requirements-dev.txt
 ```
 
 ### 2. Configurar API Key (Opcional)
+
+También puedes crear un archivo `.env` en la raíz del proyecto:
+
+```env
+OPENAI_API_KEY=sk-tu-api-key-aqui
+```
 
 **Opción A: Con OpenAI (recomendado para producción)**
 ```bash
@@ -90,6 +99,12 @@ streamlit run app.py
 ---
 
 ## 🧪 Testing
+
+Antes de correr tests, instala dependencias de desarrollo:
+
+```bash
+pip install -r requirements-dev.txt
+```
 
 ```bash
 # Ejecutar todos los tests
@@ -238,7 +253,7 @@ pip install -r requirements.txt
 **Solución**:
 ```bash
 # Reinstalar dependencias
-pip install --upgrade -r requirements.txt
+pip install --upgrade -r requirements-dev.txt
 
 # Verificar entorno virtual activo
 ```

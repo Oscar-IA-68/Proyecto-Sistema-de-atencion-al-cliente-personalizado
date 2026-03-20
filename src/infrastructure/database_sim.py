@@ -125,8 +125,17 @@ class DatabaseSimulator(IDatabase):
         }
         
         self._tickets.append(new_ticket)
-        self._save_json(self.tickets_file, self._tickets)
-        
+        saved = self._save_json(self.tickets_file, self._tickets)
+
+        if not saved:
+            print(
+                f"⚠️  Ticket #{new_id} creado en memoria, "
+                "pero no se pudo persistir en disco"
+            )
+            new_ticket["persisted"] = False
+            return new_ticket.copy()
+
+        new_ticket["persisted"] = True
         print(f"✅ Ticket #{new_id} creado exitosamente")
         return new_ticket.copy()
     

@@ -110,6 +110,20 @@ class TestDatabaseSimulator:
         # Verificar que se agregó a la lista
         final_count = len(db.get_tickets())
         assert final_count == initial_count + 1
+
+    def test_create_ticket_marks_not_persisted_when_save_fails(self, db, monkeypatch):
+        """Test que marca persisted=False si falla guardado a disco."""
+        monkeypatch.setattr(db, "_save_json", lambda *args, **kwargs: False)
+
+        new_ticket = db.create_ticket(
+            customer_id=1,
+            ticket_type="support",
+            subject="Ticket sin persistencia"
+        )
+
+        assert new_ticket is not None
+        assert new_ticket["customer_id"] == 1
+        assert new_ticket["persisted"] is False
     
     def test_get_faq(self, db):
         """Test que retorna lista de FAQ"""

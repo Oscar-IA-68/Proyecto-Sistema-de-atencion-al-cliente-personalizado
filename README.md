@@ -102,7 +102,19 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+Para desarrollo y pruebas (pytest, black, flake8):
+
+```bash
+pip install -r requirements-dev.txt
+```
+
 ### Paso 4: Configurar API Key de OpenAI (Opcional)
+
+Puedes configurar la API key en variables de entorno o en un archivo `.env` en la raíz del proyecto:
+
+```env
+OPENAI_API_KEY=tu-api-key-aqui
+```
 
 **Windows (PowerShell):**
 ```powershell
@@ -182,6 +194,8 @@ Esto abrirá automáticamente tu navegador en `http://localhost:8501`
 - ℹ️ Información del sistema
 
 ## 🧪 Testing
+
+> **Prerequisito**: Instalar dependencias de desarrollo con `pip install -r requirements-dev.txt`.
 
 ### Ejecutar Tests Unitarios
 

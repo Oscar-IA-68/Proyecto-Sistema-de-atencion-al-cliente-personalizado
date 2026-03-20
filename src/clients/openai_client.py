@@ -2,8 +2,10 @@
 Cliente OpenAI - Implementa ILLMClient
 """
 
+import random
+import time
 from typing import List, Dict, Optional
-from openai import OpenAI
+from openai import OpenAI, APIConnectionError, APITimeoutError, APIStatusError, RateLimitError
 from src.core.interfaces import ILLMClient
 from src.core.config import Config
 
@@ -22,7 +24,7 @@ class OpenAIClient(ILLMClient):
             api_key: API key de OpenAI (usa Config.OPENAI_API_KEY si no se proporciona)
             model: Modelo a usar (usa Config.OPENAI_MODEL si no se proporciona)
         """
-        self.api_key = api_key or Config.OPENAI_API_KEY
+        self.api_key = (api_key if api_key is not None else Config.OPENAI_API_KEY).strip()
         self.model = model or Config.OPENAI_MODEL
         
         if not self.api_key:
@@ -31,7 +33,57 @@ class OpenAIClient(ILLMClient):
                 "Configura OPENAI_API_KEY como variable de entorno o pásala al constructor."
             )
         
-        self.client = OpenAI(api_key=self.api_key)
+        self.client = OpenAI(api_key=self.api_key, timeout=20.0, max_retries=0)
+
+    def _query_with_retry(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: float,
+        max_tokens: int
+    ) -> str:
+        """Ejecuta una consulta con reintentos para errores transitorios."""
+        max_attempts = 3
+        base_delay_seconds = 0.5
+
+        for attempt in range(max_attempts):
+            try:
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens
+                )
+                content = response.choices[0].message.content if response.choices else ""
+                return content.strip() if isinstance(content, str) else ""
+
+            except (APIConnectionError, APITimeoutError, RateLimitError) as e:
+                is_last_attempt = attempt == max_attempts - 1
+                if is_last_attempt:
+                    raise e
+
+                delay = base_delay_seconds * (2 ** attempt) + random.uniform(0, 0.25)
+                print(
+                    f"⚠️  Error transitorio de OpenAI ({type(e).__name__}). "
+                    f"Reintentando en {delay:.2f}s..."
+                )
+                time.sleep(delay)
+
+            except APIStatusError as e:
+                status_code = getattr(e, "status_code", None)
+                is_server_error = status_code is not None and status_code >= 500
+                is_last_attempt = attempt == max_attempts - 1
+
+                if (not is_server_error) or is_last_attempt:
+                    raise e
+
+                delay = base_delay_seconds * (2 ** attempt) + random.uniform(0, 0.25)
+                print(
+                    f"⚠️  Error HTTP {status_code} de OpenAI. "
+                    f"Reintentando en {delay:.2f}s..."
+                )
+                time.sleep(delay)
+
+        raise RuntimeError("No se pudo obtener respuesta de OpenAI tras varios intentos")
     
     def query(self, prompt: str, system_prompt: Optional[str] = None, 
               temperature: float = 0.7, max_tokens: int = 500) -> str:
@@ -55,15 +107,11 @@ class OpenAIClient(ILLMClient):
         messages.append({"role": "user", "content": prompt})
         
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
+            return self._query_with_retry(
                 messages=messages,
                 temperature=temperature,
                 max_tokens=max_tokens
             )
-            
-            return response.choices[0].message.content.strip()
-        
         except Exception as e:
             print(f"❌ Error al consultar OpenAI: {e}")
             return f"Lo siento, hubo un error al procesar tu solicitud. Por favor, intenta de nuevo."

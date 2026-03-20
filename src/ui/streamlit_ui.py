@@ -17,7 +17,7 @@ def initialize_session_state():
     """Inicializa el estado de la sesión de Streamlit"""
     if 'chat_service' not in st.session_state:
         # Inicializar componentes
-        has_api_key = Config.OPENAI_API_KEY != ""
+        has_api_key = bool(Config.OPENAI_API_KEY.strip())
         
         if has_api_key:
             llm_client = OpenAIClient()
