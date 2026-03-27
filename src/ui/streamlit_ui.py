@@ -6,30 +6,18 @@ Interfaz web moderna para el chatbot
 import streamlit as st
 from datetime import datetime
 from typing import Optional
-from src.clients.openai_client import OpenAIClient, MockLLMClient
-from src.infrastructure.database_sim import DatabaseSimulator
-from src.factories.strategy_factory import StrategyFactory
-from src.application.chat_service import ChatService
-from src.core.config import Config
+from src.application.app_factory import AppFactory
 
 
 def initialize_session_state():
     """Inicializa el estado de la sesión de Streamlit"""
     if 'chat_service' not in st.session_state:
-        # Inicializar componentes
-        has_api_key = bool(Config.OPENAI_API_KEY.strip())
+        # Inicializar componentes de forma centralizada para evitar wiring duplicado.
+        components = AppFactory.create_components()
         
-        if has_api_key:
-            llm_client = OpenAIClient()
-        else:
-            llm_client = MockLLMClient()
-        
-        database = DatabaseSimulator()
-        strategy_factory = StrategyFactory(llm_client, database)
-        chat_service = ChatService(strategy_factory)
-        
-        st.session_state.chat_service = chat_service
-        st.session_state.database = database
+        st.session_state.chat_service = components.chat_service
+        st.session_state.database = components.database
+        st.session_state.llm_provider = components.provider_name
         st.session_state.messages = []
         st.session_state.current_user_id = None
         st.session_state.total_conversations = 0
@@ -83,10 +71,11 @@ def render_sidebar():
         
         # API Key status
         st.subheader("🔑 Estado API")
-        if Config.OPENAI_API_KEY:
-            st.success("✅ OpenAI API configurada")
-        else:
+        provider = st.session_state.get("llm_provider", "desconocido")
+        if provider == "mock":
             st.warning("⚠️ Modo simulación activo")
+        else:
+            st.success(f"✅ Proveedor activo: {provider}")
 
 
 def render_chat_interface():

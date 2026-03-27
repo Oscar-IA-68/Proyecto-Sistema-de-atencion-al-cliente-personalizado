@@ -6,7 +6,6 @@ Interfaz por consola para el chatbot
 import sys
 from typing import Optional
 from src.core.interfaces import IChatService
-from src.core.config import Config
 
 
 class CLIInterface:
@@ -153,27 +152,18 @@ class CLIInterface:
 
 def main():
     """Función principal para ejecutar la CLI"""
-    from src.clients.openai_client import OpenAIClient, MockLLMClient
-    from src.infrastructure.database_sim import DatabaseSimulator
-    from src.factories.strategy_factory import StrategyFactory
-    from src.application.chat_service import ChatService
+    from src.application.app_factory import AppFactory
     
     print("🚀 Iniciando chatbot...")
     
-    # Validar configuración
-    has_api_key = Config.validate()
-    
-    # Inicializar componentes (Dependency Injection manual)
     try:
-        if has_api_key:
-            llm_client = OpenAIClient()
-        else:
+        components = AppFactory.create_components()
+
+        # Mensaje explicito para que el operador sepa si esta en modo mock.
+        if components.provider_name == "mock":
             print("⚠️  Usando modo simulación (sin OpenAI)")
-            llm_client = MockLLMClient()
-        
-        database = DatabaseSimulator()
-        strategy_factory = StrategyFactory(llm_client, database)
-        chat_service = ChatService(strategy_factory)
+
+        chat_service = components.chat_service
         
         # Iniciar CLI
         cli = CLIInterface(chat_service)
