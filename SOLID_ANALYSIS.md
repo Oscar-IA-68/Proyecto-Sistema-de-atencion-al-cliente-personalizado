@@ -106,6 +106,8 @@ factory.register_strategy("refund", RefundStrategy(llm, db))
 # 3. CERO cambios en strategies, services, factories ✅
 ```
 
+En la actualización multi-proveedor se agregó una `LLMProviderFactory` para seleccionar cliente LLM por configuración (`LLM_PROVIDER`) y un `AppFactory` para centralizar el wiring de dependencias. Esto mantiene OCP: añadir un proveedor nuevo implica crear su cliente e inscribirlo en el registry, sin tocar las estrategias existentes.
+
 ---
 
 ### 3. Liskov Substitution Principle (LSP)
@@ -264,7 +266,7 @@ def test_register_new_strategy():
     assert strategy is not None  # ✅ Sin modificar factory
 ```
 
-**Resultado**: 72/72 tests pasando ✅
+**Resultado**: 83/83 tests pasando ✅
 
 El entorno de pruebas usa aislamiento de datos en `tests/conftest.py` para evitar modificar archivos JSON reales del directorio `data/`.
 
@@ -294,7 +296,7 @@ Las métricas operativas agregadas en Etapa 4 se validan en `tests/test_chat_ser
 ✅ Cohesión alta: Cada clase hace UNA cosa bien (SRP)
 ✅ Acoplamiento bajo: Módulos independientes (DIP)
 ✅ Extensibilidad alta: +5 estrategias fácilmente (OCP)
-✅ Testabilidad alta: 41 tests, 100% pasan (DIP, LSP)
+✅ Testabilidad alta: 83 tests, 100% pasan (DIP, LSP)
 ✅ Mantenibilidad alta: Cambios localizados (ISP, SRP)
 ```
 

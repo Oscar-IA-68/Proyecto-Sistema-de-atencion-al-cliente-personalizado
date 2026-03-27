@@ -1,6 +1,6 @@
 # 🤖 Sistema de Atención al Cliente Automatizado
 
-**Proyecto LLM - Chatbot Inteligente con OpenAI**
+**Proyecto LLM - Chatbot Inteligente Multi-proveedor**
 
 Sistema de atención al cliente automatizado que utiliza modelos de lenguaje de gran escala (LLM) para proporcionar soporte técnico, recomendaciones de productos, manejo de quejas y respuestas a preguntas frecuentes.
 
@@ -26,7 +26,7 @@ src/
 │   ├── ticket_policy.py
 │   ├── severity_policy.py
 │   └── fallback_policy.py
-├── clients/            # Clientes externos (OpenAI)
+├── clients/            # Clientes externos (OpenAI + mocks)
 │   └── openai_client.py
 ├── infrastructure/     # Persistencia y BD simulada
 │   └── database_sim.py
@@ -37,8 +37,10 @@ src/
 │   ├── faq_strategy.py
 │   └── general_strategy.py
 ├── factories/          # Factory Pattern (OCP)
+│   ├── llm_provider_factory.py  # Selección de proveedor LLM por configuración
 │   └── strategy_factory.py
 ├── application/        # Servicios de aplicación (SRP)
+│   ├── app_factory.py   # Wiring centralizado de dependencias
 │   └── chat_service.py
 └── ui/                 # Interfaces de usuario
     ├── cli_interface.py
@@ -59,7 +61,7 @@ src/
 - Estrategias delegan reglas de ticket, severidad y fallback
 - Métricas operativas en `ChatService`: latencia, fallback y accuracy de intención
 - Tests ejecutados con aislamiento de datos para no mutar archivos en `data/`
-- Suite de pruebas actual: **72 tests pasando**
+- Suite de pruebas actual: **83 tests pasando**
 
 ## 🚀 Instalación
 
@@ -114,7 +116,15 @@ Puedes configurar la API key en variables de entorno o en un archivo `.env` en l
 
 ```env
 OPENAI_API_KEY=tu-api-key-aqui
+LLM_PROVIDER=openai
 ```
+
+`LLM_PROVIDER` define qué cliente se inicializa en runtime:
+
+- `openai`: usa `OpenAIClient` (requiere `OPENAI_API_KEY`)
+- `mock`: usa `MockLLMClient` (sin llamadas externas)
+
+Si seleccionas `openai` sin API key, el sistema degrada automáticamente a `mock`.
 
 **Windows (PowerShell):**
 ```powershell
@@ -280,10 +290,18 @@ class NuevaStrategy(IChatStrategy):
 
 ### Cambiar Proveedor de LLM
 
-Gracias a la interfaz `ILLMClient`, puedes cambiar de OpenAI a otro proveedor:
+Gracias a la interfaz `ILLMClient`, puedes cambiar proveedor sin modificar estrategias.
+
+Compatibilidad actual del proyecto:
+
+- ✅ `openai` (modelo configurable con `OPENAI_MODEL`)
+- ✅ `mock` (modo simulación para desarrollo y pruebas)
+- 🧩 Extensible a nuevos proveedores vía `LLMProviderFactory.register_provider(...)`
+
+Ejemplo de extensión:
 
 ```python
-# src/clients/anthropic_client.py
+# src/clients/anthropic_client.py (ejemplo de extensión)
 class AnthropicClient(ILLMClient):
     def query(self, prompt: str, ...) -> str:
         # Implementación con Anthropic Claude
