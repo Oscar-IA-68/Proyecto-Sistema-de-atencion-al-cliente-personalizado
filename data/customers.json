@@ -1,5 +1,13 @@
 [
   {
+    "id": "C001",
+    "name": "Diego Fernández",
+    "email": "diego.fernandez@email.com",
+    "phone": "+52-555-7890",
+    "membership": "Premium",
+    "tickets": [106, 107]
+  },
+  {
     "id": 1,
     "name": "María González",
     "email": "maria.gonzalez@email.com",

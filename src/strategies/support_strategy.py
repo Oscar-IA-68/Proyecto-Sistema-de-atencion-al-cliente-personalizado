@@ -62,6 +62,7 @@ Proporciona una solución clara y paso a paso. Si necesitas más información, p
         )
         
         # Crear ticket si el problema parece serio
+        ticket_created = None
         if self.ticket_policy.should_create_ticket(user_input):
             if context.user_id:
                 ticket = self.database.create_ticket(
@@ -69,13 +70,33 @@ Proporciona una solución clara y paso a paso. Si necesitas más información, p
                     ticket_type="support",
                     subject=user_input[:100]  # Primeros 100 caracteres
                 )
+                ticket_created = ticket.get('id')
                 response_text += f"\n\n📝 He creado el ticket #{ticket['id']} para dar seguimiento a tu problema."
+        
+        # Enriquecer metadata con contexto del cliente y ticketing
+        metadata = {"requires_followup": True}
+        if context.user_id:
+            # Agregar customer_id a metadata
+            metadata["customer_id"] = context.user_id
+            
+            # Agregar información del cliente si existe
+            customer = self.database.get_customer_by_id(context.user_id)
+            if customer:
+                metadata["customer_name"] = customer.get('name')
+                metadata["customer_membership"] = customer.get('membership')
+            
+            # Agregar información de tickets
+            tickets = self.database.get_tickets(customer_id=context.user_id)
+            metadata["open_tickets_count"] = len(tickets)
+            
+            if ticket_created:
+                metadata["ticket_created_id"] = ticket_created
         
         return ChatResponse(
             message=response_text,
             intent="support",
             confidence=0.9,
-            metadata={"requires_followup": True}
+            metadata=metadata
         )
     
     def get_strategy_name(self) -> str:

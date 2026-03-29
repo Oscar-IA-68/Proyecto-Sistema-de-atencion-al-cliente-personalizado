@@ -97,5 +97,32 @@
     "status": "open",
     "created_at": "2026-03-17",
     "resolved_at": null
+  },
+  {
+    "id": 112,
+    "customer_id": "test_user_07",
+    "type": "support",
+    "subject": "Tengo un problema urgente, ¿puede ayudarme?",
+    "status": "open",
+    "created_at": "2026-03-28",
+    "resolved_at": null
+  },
+  {
+    "id": 113,
+    "customer_id": "test_user_07",
+    "type": "support",
+    "subject": "Tengo un problema urgente, ¿puede ayudarme?",
+    "status": "open",
+    "created_at": "2026-03-28",
+    "resolved_at": null
+  },
+  {
+    "id": 114,
+    "customer_id": "test_user_07",
+    "type": "support",
+    "subject": "Tengo un problema urgente, ¿puede ayudarme?",
+    "status": "open",
+    "created_at": "2026-03-28",
+    "resolved_at": null
   }
 ]

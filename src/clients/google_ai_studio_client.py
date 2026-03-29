@@ -116,6 +116,7 @@ class GoogleAIStudioClient(ILLMClient):
     def classify_intent(self, user_input: str, possible_intents: List[str]) -> Dict[str, float]:
         """
         Clasifica la intención del usuario usando Google Gemini
+        Utiliza fuzzy matching y detección de palabras clave para mayor precisión
         
         Args:
             user_input: Texto del usuario
@@ -124,6 +125,17 @@ class GoogleAIStudioClient(ILLMClient):
         Returns:
             Diccionario con intenciones y sus probabilidades
         """
+        from difflib import get_close_matches
+        
+        # Palabras clave por intención para mejor clasificación
+        intent_keywords = {
+            "support": ["error", "problema", "no funciona", "broken", "crash", "fallo", "urgente", "crítico", "grave"],
+            "recommendation": ["recomendación", "sugerencia", "qué compro", "busco", "quiero", "necesito", "laptop", "producto"],
+            "complaint": ["queja", "molesto", "insatisfecho", "malo", "terrible", "decepcionado", "fraude"],
+            "faq": ["cómo", "qué es", "cuál", "dónde", "cuándo", "por qué", "política", "procedimiento"],
+        }
+        
+        user_input_lower = user_input.lower()
         intents_str = "\n".join([f"- {intent}" for intent in possible_intents])
         
         prompt = f"""Mensaje del usuario: "{user_input}"
@@ -141,16 +153,31 @@ Clasifica el mensaje en UNA de estas intenciones. Responde SOLO con el nombre de
                 max_tokens=50
             ).lower().strip()
             
-            # Encuentra la intención más similar de las disponibles
+            # 1. Búsqueda exacta
             if intent in possible_intents:
                 return {intent: 1.0}
             
-            # Si no hay coincidencia exacta, busca la más cercana
-            for possible_intent in possible_intents:
-                if possible_intent in intent or intent in possible_intent:
-                    return {possible_intent: 0.8}
+            # 2. Búsqueda fuzzy: get_close_matches con threshold 0.85
+            close_matches = get_close_matches(intent, possible_intents, n=1, cutoff=0.85)
+            if close_matches:
+                return {close_matches[0]: 0.95}
             
-            # Default a "general" si no hay match
+            # 3. Búsqueda por palabras clave
+            best_intent = None
+            max_matches = 0
+            for possible_intent, keywords in intent_keywords.items():
+                if possible_intent not in possible_intents:
+                    continue
+                matches = sum(1 for kw in keywords if kw in user_input_lower)
+                if matches > max_matches:
+                    max_matches = matches
+                    best_intent = possible_intent
+            
+            if best_intent and max_matches > 0:
+                confidence = min(0.9, 0.6 + (max_matches * 0.15))  # +0.15 por cada keyword
+                return {best_intent: confidence}
+            
+            # 4. Fallback a "general" si no hay match
             return {"general": 0.5}
         
         except Exception as e:

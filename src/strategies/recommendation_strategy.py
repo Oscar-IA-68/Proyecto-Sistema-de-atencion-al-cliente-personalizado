@@ -92,16 +92,40 @@ Si necesitas más información sobre su presupuesto o uso específico, pregúnta
         return "\n".join(formatted)
     
     def _extract_mentioned_products(self, response: str, products: List[Dict[str, Any]]) -> List[str]:
-        """Extrae nombres de productos mencionados en la respuesta"""
+        """Extrae nombres de productos mencionados en la respuesta usando fuzzy matching"""
+        from difflib import SequenceMatcher
+        
         mentioned = []
         response_lower = response.lower()
         
         for product in products:
             product_name = product.get('name', '')
-            if product_name.lower() in response_lower:
+            product_name_lower = product_name.lower()
+            
+            # 1. Búsqueda exacta (rápida)
+            if product_name_lower in response_lower:
                 mentioned.append(product_name)
+                continue
+            
+            # 2. Búsqueda fuzzy: si el nombre del producto aparece de forma similar
+            # Busca coincidencias parciales con token basado
+            response_tokens = response_lower.split()
+            product_tokens = product_name_lower.split()
+            
+            found = False
+            for prod_token in product_tokens:
+                for resp_word in response_tokens:
+                    # Calcula similitud entre token del producto y palabra en respuesta
+                    similarity = SequenceMatcher(None, prod_token, resp_word).ratio()
+                    if similarity > 0.70:  # Lowered from 0.85 for better detection
+                        mentioned.append(product_name)
+                        found = True
+                        break
+                if found:
+                    break
         
-        return mentioned
+        # Remover duplicados
+        return list(set(mentioned))
     
     def get_strategy_name(self) -> str:
         """Retorna el nombre de la estrategia"""

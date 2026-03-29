@@ -86,6 +86,16 @@ class ChatService(IChatService):
         # Procesar con la estrategia
         response = strategy.process(context)
         
+        # Normalizar confidence: asegurar que está en rango [0, 1]
+        if hasattr(response, 'confidence') and response.confidence is not None:
+            # Si confidence está dado como 0.8-1.0, usarla tal cual
+            # Si está dado como 0-100, normalizarla
+            if response.confidence > 1.0:
+                response.confidence = response.confidence / 100.0
+        else:
+            # Calcular confidence desde la estrategia si no está definido
+            response.confidence = 0.7  # Default moderado
+        
         # Actualizar historial
         self._add_to_history(user_input, response.message)
         
