@@ -395,18 +395,60 @@ class TestSuite:
             print(f"✓ Metadata: {response.metadata}")
             print(f"✓ Tiempo: {elapsed:.2f}s")
             
-            # Validación: debe manejar input largo sin truncar respuesta
-            response_sufficient = len(response.message) > 50
+            # Validación endurecida: evitar PASS con fallback por error o respuesta mínima
+            message_text = (response.message or "").strip()
+            response_length = len(message_text)
+            input_length = len(user_message)
+            response_ratio = (response_length / input_length) if input_length > 0 else 0.0
+
+            fallback_error_phrases = [
+                "lo siento, hubo un error al procesar tu solicitud",
+                "por favor, intenta de nuevo",
+            ]
+            is_error_fallback = any(phrase in message_text.lower() for phrase in fallback_error_phrases)
+
+            has_min_length = response_length >= 120
+            has_min_ratio = response_ratio >= 0.30
+            confidence_ok = response.confidence >= 0.6
+
+            quality_checks = {
+                "has_min_length": has_min_length,
+                "has_min_ratio": has_min_ratio,
+                "is_error_fallback": is_error_fallback,
+                "confidence_ok": confidence_ok,
+            }
+
+            if is_error_fallback:
+                status = "PARTIAL"
+                status_reason = "fallback_error_detected"
+            elif has_min_length and has_min_ratio and confidence_ok:
+                status = "PASS"
+                status_reason = "quality_checks_passed"
+            elif response_length == 0:
+                status = "FAIL"
+                status_reason = "empty_response"
+            else:
+                status = "PARTIAL"
+                status_reason = "insufficient_depth_for_long_input"
+
+            print(f"✓ Longitud respuesta >= 120: {has_min_length}")
+            print(f"✓ Ratio respuesta/input >= 0.30: {has_min_ratio} ({response_ratio:.2%})")
+            print(f"✓ Detecta fallback de error: {is_error_fallback}")
+            print(f"✓ Confianza >= 0.60: {confidence_ok}")
+            print(f"✓ Criterio endurecido estado: {status} ({status_reason})")
             
             return {
                 "test": 8,
                 "name": "Edge Case Long Input",
-                "status": "PASS" if response_sufficient else "PARTIAL",
+                "status": status,
+                "status_reason": status_reason,
                 "intent": response.intent,
                 "confidence": response.confidence,
-                "input_length": len(user_message),
-                "response_length": len(response.message),
+                "input_length": input_length,
+                "response_length": response_length,
+                "response_ratio": response_ratio,
                 "elapsed": elapsed,
+                "quality_checks": quality_checks,
                 "metadata": response.metadata,
                 "timestamp": datetime.now().isoformat()
             }

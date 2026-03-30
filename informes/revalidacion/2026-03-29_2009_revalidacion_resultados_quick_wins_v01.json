@@ -1,0 +1,40 @@
+{
+  "test_2": {
+    "status": "PASS",
+    "elapsed": 3.8800644874572754,
+    "improvements": {
+      "customer_id": true,
+      "customer_name": true,
+      "open_tickets_count": true
+    },
+    "metadata": {
+      "requires_followup": true,
+      "customer_id": "C001",
+      "customer_name": "Diego Fernández",
+      "customer_membership": "Premium",
+      "open_tickets_count": 0
+    }
+  },
+  "test_3": {
+    "status": "PASS",
+    "elapsed": 3.533433675765991,
+    "products_mentioned": [
+      "Laptop Pro X"
+    ],
+    "improvement": "Cambio de exact matching a fuzzy matching"
+  },
+  "test_7": {
+    "status": "PASS",
+    "elapsed": 3.5685875415802,
+    "intent_detected": "support",
+    "improvement": "Agregó keywords: urgente, crítico, grave, fallo"
+  },
+  "test_8": {
+    "status": "PARTIAL",
+    "elapsed": 3.5910065174102783,
+    "input_length": 333,
+    "response_length": 100,
+    "ratio": 0.3003003003003003,
+    "note": "Focus en multi-intención → observar si respuesta es coherente"
+  }
+}

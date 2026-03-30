@@ -1,0 +1,101 @@
+[
+  {
+    "test": 1,
+    "name": "Humo E2E",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.8,
+    "elapsed": 0.9986047744750977,
+    "message_len": 240,
+    "timestamp": "2026-03-29T20:10:36.912540"
+  },
+  {
+    "test": 2,
+    "name": "Support Intent",
+    "status": "PASS",
+    "intent": "support",
+    "confidence": 0.9,
+    "has_customer_context": true,
+    "elapsed": 3.34045147895813,
+    "metadata": {
+      "requires_followup": true,
+      "customer_id": "C001",
+      "customer_name": "Diego Fernández",
+      "customer_membership": "Premium",
+      "open_tickets_count": 0
+    },
+    "timestamp": "2026-03-29T20:10:40.753853"
+  },
+  {
+    "test": 3,
+    "name": "Recommendation Intent",
+    "status": "PASS",
+    "intent": "recommendation",
+    "confidence": 0.9,
+    "has_products": true,
+    "elapsed": 4.873813629150391,
+    "metadata": {
+      "products_mentioned": [],
+      "catalog_size": 6
+    },
+    "timestamp": "2026-03-29T20:10:46.127965"
+  },
+  {
+    "test": 4,
+    "name": "FAQ Fallback",
+    "status": "PASS",
+    "intent": "faq",
+    "confidence": 0.95,
+    "elapsed": 0.6728537082672119,
+    "metadata": {
+      "used_faq": true,
+      "faq_results_count": 3
+    },
+    "timestamp": "2026-03-29T20:10:47.301641"
+  },
+  {
+    "test": 5,
+    "name": "Entrada Ambigua",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.8,
+    "fallback_correct": true,
+    "elapsed": 1.792099952697754,
+    "timestamp": "2026-03-29T20:10:49.594764"
+  },
+  {
+    "test": 6,
+    "name": "Respuesta Malformada",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.8,
+    "has_valid_structure": true,
+    "elapsed": 4.3983025550842285,
+    "timestamp": "2026-03-29T20:10:54.494163"
+  },
+  {
+    "test": 7,
+    "name": "Resiliencia",
+    "status": "PASS",
+    "intent": "support",
+    "confidence": 0.9,
+    "response_valid": true,
+    "elapsed": 4.297841310501099,
+    "timestamp": "2026-03-29T20:10:59.292590"
+  },
+  {
+    "test": 8,
+    "name": "Edge Case Long Input",
+    "status": "PASS",
+    "intent": "recommendation",
+    "confidence": 0.9,
+    "input_length": 357,
+    "response_length": 79,
+    "elapsed": 4.403554677963257,
+    "metadata": {
+      "products_mentioned": [],
+      "catalog_size": 6
+    },
+    "timestamp": "2026-03-29T20:11:04.196736"
+  }
+]

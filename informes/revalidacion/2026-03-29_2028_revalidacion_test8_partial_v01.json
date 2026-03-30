@@ -1,0 +1,25 @@
+{
+  "test": 8,
+  "name": "Edge Case Long Input",
+  "status": "PARTIAL",
+  "status_reason": "insufficient_depth_for_long_input",
+  "intent": "recommendation",
+  "confidence": 0.9,
+  "input_length": 357,
+  "response_length": 95,
+  "response_ratio": 0.2661064425770308,
+  "elapsed": 3.663153648376465,
+  "quality_checks": {
+    "has_min_length": false,
+    "has_min_ratio": false,
+    "is_error_fallback": false,
+    "confidence_ok": true
+  },
+  "metadata": {
+    "products_mentioned": [],
+    "catalog_size": 6
+  },
+  "timestamp": "2026-03-29T20:28:16.704091",
+  "execution_mode": "single_test",
+  "runner": "scripts.run_8_tests.TestSuite.test_8_edge_case_long_input"
+}

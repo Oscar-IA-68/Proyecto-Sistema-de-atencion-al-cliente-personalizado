@@ -7,6 +7,15 @@ from src.application.chat_service import ChatService
 from src.factories.strategy_factory import StrategyFactory
 from src.clients.openai_client import MockLLMClient
 from src.infrastructure.database_sim import DatabaseSimulator
+from src.core.config import Config
+
+
+class MultiIntentMockLLMClient(MockLLMClient):
+    def classify_all_intents(self, user_input, possible_intents):
+        return [
+            {"intent": "support", "score": 0.9, "keywords_matched": ["problema"]},
+            {"intent": "recommendation", "score": 0.75, "keywords_matched": ["recomendación"]},
+        ]
 
 
 class TestChatService:
@@ -175,3 +184,22 @@ class TestChatService:
         )
         
         assert response.intent == "faq"
+
+    def test_process_message_multi_intent_mode(self, monkeypatch):
+        """Test activación de modo multi-intención y metadata asociada."""
+        monkeypatch.setattr(Config, "MULTI_INTENT_ENABLED", True)
+        monkeypatch.setattr(Config, "MULTI_INTENT_THRESHOLD", 0.6)
+        monkeypatch.setattr(Config, "MULTI_INTENT_MAX_STRATEGIES", 2)
+
+        llm_client = MultiIntentMockLLMClient()
+        database = DatabaseSimulator()
+        factory = StrategyFactory(llm_client, database)
+        service = ChatService(factory)
+
+        response = service.process_message(
+            "Tengo un problema y además quiero una recomendación de producto"
+        )
+
+        assert response is not None
+        assert response.metadata.get("multi_intent") is True
+        assert len(response.metadata.get("intents_detected", [])) >= 2

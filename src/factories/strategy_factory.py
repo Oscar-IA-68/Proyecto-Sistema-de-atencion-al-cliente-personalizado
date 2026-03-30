@@ -100,6 +100,46 @@ class StrategyFactory(IStrategyFactory):
         
         # Fallback a general
         return "general"
+
+    def detect_all_intents(self, user_input: str) -> List[Dict[str, object]]:
+        """Detecta múltiples intenciones con fallback compatible."""
+        available_intents = self.get_available_intents()
+
+        # Ruta preferida: cliente con clasificador multi-intencion.
+        multi_method = getattr(self.llm_client, "classify_all_intents", None)
+        if callable(multi_method):
+            try:
+                raw_scores = multi_method(user_input, available_intents)
+                normalized: List[Dict[str, object]] = []
+                for item in raw_scores or []:
+                    intent = str(item.get("intent", "general"))
+                    if intent not in available_intents:
+                        continue
+                    normalized.append(
+                        {
+                            "intent": intent,
+                            "score": float(item.get("score", 0.0)),
+                            "keywords_matched": item.get("keywords_matched", []),
+                        }
+                    )
+
+                if normalized:
+                    normalized.sort(key=lambda x: x["score"], reverse=True)
+                    return normalized
+            except Exception as e:
+                print(f"⚠️  Error en classify_all_intents, fallback a clasificación única: {e}")
+
+        # Fallback: clasificación tradicional -> lista de 1 intención.
+        single_scores = self.llm_client.classify_intent(user_input, available_intents)
+        if not single_scores:
+            return [{"intent": "general", "score": 0.5, "keywords_matched": []}]
+
+        intent, score = max(single_scores.items(), key=lambda x: x[1])
+        if intent not in available_intents:
+            intent = "general"
+            score = 0.5
+
+        return [{"intent": intent, "score": float(score), "keywords_matched": []}]
     
     def get_available_intents(self) -> List[str]:
         """

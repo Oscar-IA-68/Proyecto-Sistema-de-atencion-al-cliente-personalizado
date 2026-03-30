@@ -104,6 +104,16 @@ Manten conversaciones naturales, ayuda con dudas generales, y dirige a los usuar
     INTENT_CONFIDENCE_THRESHOLD: float = 0.6
     FAQ_SIMILARITY_THRESHOLD: float = 0.7
 
+    # Configuracion P3: procesamiento multi-intencion
+    MULTI_INTENT_ENABLED: bool = os.getenv("MULTI_INTENT_ENABLED", "true").strip().lower() in {
+        "1", "true", "yes", "on"
+    }
+    MULTI_INTENT_THRESHOLD: float = _get_env_float("MULTI_INTENT_THRESHOLD", 0.6)
+    MULTI_INTENT_MAX_STRATEGIES: int = _get_env_int("MULTI_INTENT_MAX_STRATEGIES", 2)
+    MULTI_INTENT_SYNTHESIS_MODE: str = (
+        os.getenv("MULTI_INTENT_SYNTHESIS_MODE", "sequential").strip().lower() or "sequential"
+    )
+
     # Configuracion de conversacion
     MAX_HISTORY_LENGTH: int = 10
 

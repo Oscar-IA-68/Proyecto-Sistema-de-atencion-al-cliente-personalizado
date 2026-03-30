@@ -186,3 +186,66 @@ Clasifica el mensaje en UNA de estas intenciones. Responde SOLO con el nombre de
         except Exception as e:
             print(f"❌ Error al clasificar intención: {e}")
             return {fallback_intent: 0.5}
+
+    def classify_all_intents(self, user_input: str, possible_intents: List[str]) -> List[Dict[str, object]]:
+        """
+        Detecta múltiples intenciones en un mensaje.
+
+        Returns:
+            Lista ordenada por score descendente con formato:
+            [{"intent": str, "score": float, "keywords_matched": List[str]}]
+        """
+        user_input_lower = user_input.lower()
+
+        intent_keywords = {
+            "support": [
+                "error", "problema", "no funciona", "broken", "crash", "fallo",
+                "urgente", "crítico", "grave", "no puedo", "ayuda"
+            ],
+            "recommendation": [
+                "recomendación", "recomiendas", "sugerencia", "qué compro", "busco",
+                "quiero", "necesito", "laptop", "producto", "alternativa"
+            ],
+            "complaint": [
+                "queja", "molesto", "insatisfecho", "malo", "terrible", "decepcionado", "fraude"
+            ],
+            "faq": [
+                "cómo", "qué es", "cuál", "dónde", "cuándo", "por qué", "política", "procedimiento"
+            ],
+            "general": []
+        }
+
+        scored: List[Dict[str, object]] = []
+        for intent in possible_intents:
+            keywords = intent_keywords.get(intent, [])
+            matched = [kw for kw in keywords if kw in user_input_lower]
+            if matched:
+                score = min(0.95, 0.55 + (0.12 * len(matched)))
+                scored.append({
+                    "intent": intent,
+                    "score": float(score),
+                    "keywords_matched": matched,
+                })
+
+        # Refuerzo de intención principal para mantener consistencia con el clasificador actual.
+        primary_scores = self.classify_intent(user_input, possible_intents)
+        if primary_scores:
+            primary_intent, primary_score = max(primary_scores.items(), key=lambda item: item[1])
+            found = next((x for x in scored if x["intent"] == primary_intent), None)
+            if found:
+                found["score"] = max(float(found["score"]), float(primary_score))
+            else:
+                scored.append({
+                    "intent": primary_intent,
+                    "score": float(primary_score),
+                    "keywords_matched": [],
+                })
+
+        if not scored:
+            fallback_intent = "general" if "general" in possible_intents else (
+                possible_intents[0] if possible_intents else "general"
+            )
+            return [{"intent": fallback_intent, "score": 0.5, "keywords_matched": []}]
+
+        scored.sort(key=lambda item: float(item["score"]), reverse=True)
+        return scored

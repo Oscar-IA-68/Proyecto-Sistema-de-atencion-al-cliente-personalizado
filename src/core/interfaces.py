@@ -34,6 +34,18 @@ class ChatResponse:
             self.metadata = {}
 
 
+@dataclass
+class IntentScore:
+    """Score de una intención detectada en un mensaje."""
+    intent: str
+    score: float
+    keywords_matched: List[str] = None
+
+    def __post_init__(self):
+        if self.keywords_matched is None:
+            self.keywords_matched = []
+
+
 class ILLMClient(ABC):
     """
     Interfaz para clientes de modelos de lenguaje

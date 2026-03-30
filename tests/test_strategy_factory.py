@@ -26,6 +26,20 @@ class EmptyScoresLLMClient:
         return {}
 
 
+class MultiIntentLLMClient:
+    def query(self, prompt, system_prompt=None, temperature=0.7, max_tokens=500):
+        return "mock"
+
+    def classify_intent(self, user_input, possible_intents):
+        return {"support": 0.9}
+
+    def classify_all_intents(self, user_input, possible_intents):
+        return [
+            {"intent": "support", "score": 0.91, "keywords_matched": ["problema"]},
+            {"intent": "recommendation", "score": 0.76, "keywords_matched": ["recomiendas"]},
+        ]
+
+
 class TestStrategyFactory:
     """Tests para el Factory Pattern"""
     
@@ -125,3 +139,14 @@ class TestStrategyFactory:
         intent = factory.detect_intent("Mensaje ambiguo")
 
         assert intent == "general"
+
+    def test_detect_all_intents_returns_sorted_multi_scores(self):
+        database = DatabaseSimulator()
+        factory = StrategyFactory(MultiIntentLLMClient(), database)
+
+        scores = factory.detect_all_intents("Tengo un problema y también quiero recomendaciones")
+
+        assert len(scores) == 2
+        assert scores[0]["intent"] == "support"
+        assert scores[1]["intent"] == "recommendation"
+        assert scores[0]["score"] >= scores[1]["score"]
