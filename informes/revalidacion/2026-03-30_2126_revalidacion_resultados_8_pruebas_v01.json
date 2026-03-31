@@ -1,0 +1,151 @@
+[
+  {
+    "test": 1,
+    "name": "Humo E2E",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.835,
+    "elapsed": 0.9685018062591553,
+    "message_len": 535,
+    "timestamp": "2026-03-30T21:25:53.894942"
+  },
+  {
+    "test": 2,
+    "name": "Support Intent",
+    "status": "PASS",
+    "intent": "support",
+    "confidence": 0.9,
+    "has_customer_context": true,
+    "elapsed": 3.762406349182129,
+    "metadata": {
+      "requires_followup": true,
+      "customer_id": "C001",
+      "customer_name": "Diego Fernández",
+      "customer_membership": "Premium",
+      "open_tickets_count": 0,
+      "multi_intent": false,
+      "intents_detected": [
+        "support"
+      ],
+      "intent_scores": {
+        "support": 1.0
+      }
+    },
+    "timestamp": "2026-03-30T21:25:58.157907"
+  },
+  {
+    "test": 3,
+    "name": "Recommendation Intent",
+    "status": "PASS",
+    "intent": "recommendation",
+    "confidence": 0.9,
+    "has_products": true,
+    "elapsed": 3.81294322013855,
+    "metadata": {
+      "products_mentioned": [
+        "Laptop Pro X"
+      ],
+      "catalog_size": 6,
+      "multi_intent": false,
+      "intents_detected": [
+        "recommendation"
+      ],
+      "intent_scores": {
+        "recommendation": 1.0
+      }
+    },
+    "timestamp": "2026-03-30T21:26:02.471318"
+  },
+  {
+    "test": 4,
+    "name": "FAQ Fallback",
+    "status": "PASS",
+    "intent": "faq",
+    "confidence": 0.95,
+    "elapsed": 0.7383337020874023,
+    "metadata": {
+      "used_faq": true,
+      "faq_results_count": 3,
+      "multi_intent": false,
+      "intents_detected": [
+        "faq"
+      ],
+      "intent_scores": {
+        "faq": 0.8999999999999999
+      }
+    },
+    "timestamp": "2026-03-30T21:26:03.710574"
+  },
+  {
+    "test": 5,
+    "name": "Entrada Ambigua",
+    "status": "PARTIAL",
+    "intent": "support",
+    "confidence": 0.9,
+    "fallback_correct": false,
+    "elapsed": 3.7884202003479004,
+    "timestamp": "2026-03-30T21:26:07.999408"
+  },
+  {
+    "test": 6,
+    "name": "Respuesta Malformada",
+    "status": "PASS",
+    "intent": "general",
+    "confidence": 0.8,
+    "has_valid_structure": true,
+    "elapsed": 6.819630861282349,
+    "timestamp": "2026-03-30T21:26:15.319667"
+  },
+  {
+    "test": 7,
+    "name": "Resiliencia",
+    "status": "PASS",
+    "intent": "support",
+    "confidence": 0.9,
+    "response_valid": true,
+    "elapsed": 7.427928924560547,
+    "timestamp": "2026-03-30T21:26:23.248519"
+  },
+  {
+    "test": 8,
+    "name": "Edge Case Long Input",
+    "status": "PASS",
+    "status_reason": "quality_checks_passed",
+    "intent": "recommendation",
+    "confidence": 0.8500000000000001,
+    "input_length": 357,
+    "response_length": 234,
+    "response_ratio": 0.6554621848739496,
+    "elapsed": 6.517725229263306,
+    "quality_checks": {
+      "has_min_length": true,
+      "has_min_ratio": true,
+      "is_error_fallback": false,
+      "confidence_ok": true
+    },
+    "metadata": {
+      "multi_intent": true,
+      "intents_detected": [
+        "recommendation",
+        "support"
+      ],
+      "intent_scores": {
+        "recommendation": 0.91,
+        "support": 0.79
+      },
+      "individual_metadata": {
+        "recommendation": {
+          "products_mentioned": [],
+          "catalog_size": 6
+        },
+        "support": {
+          "requires_followup": true,
+          "customer_id": "test_user_08",
+          "open_tickets_count": 0
+        }
+      },
+      "synthesis_mode": "sequential"
+    },
+    "timestamp": "2026-03-30T21:26:30.268214"
+  }
+]

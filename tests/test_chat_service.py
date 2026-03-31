@@ -203,3 +203,18 @@ class TestChatService:
         assert response is not None
         assert response.metadata.get("multi_intent") is True
         assert len(response.metadata.get("intents_detected", [])) >= 2
+
+    def test_short_ambiguous_input_stays_general_with_p3(self, monkeypatch):
+        """Evita regresión: entrada corta ambigua no debe sobre-clasificarse."""
+        monkeypatch.setattr(Config, "MULTI_INTENT_ENABLED", True)
+        monkeypatch.setattr(Config, "MULTI_INTENT_THRESHOLD", 0.6)
+        monkeypatch.setattr(Config, "MULTI_INTENT_MAX_STRATEGIES", 2)
+
+        llm_client = MultiIntentMockLLMClient()
+        database = DatabaseSimulator()
+        factory = StrategyFactory(llm_client, database)
+        service = ChatService(factory)
+
+        response = service.process_message("Ayuda")
+
+        assert response.intent == "general"

@@ -1,0 +1,44 @@
+{
+  "test": 8,
+  "name": "Edge Case Long Input",
+  "status": "PASS",
+  "status_reason": "quality_checks_passed",
+  "intent": "support",
+  "confidence": 0.9550000000000001,
+  "input_length": 357,
+  "response_length": 243,
+  "response_ratio": 0.680672268907563,
+  "elapsed": 6.6421380043029785,
+  "quality_checks": {
+    "has_min_length": true,
+    "has_min_ratio": true,
+    "is_error_fallback": false,
+    "confidence_ok": true
+  },
+  "metadata": {
+    "multi_intent": true,
+    "intents_detected": [
+      "support",
+      "recommendation"
+    ],
+    "intent_scores": {
+      "support": 1.0,
+      "recommendation": 0.91
+    },
+    "individual_metadata": {
+      "support": {
+        "requires_followup": true,
+        "customer_id": "test_user_08",
+        "open_tickets_count": 0
+      },
+      "recommendation": {
+        "products_mentioned": [],
+        "catalog_size": 6
+      }
+    },
+    "synthesis_mode": "sequential"
+  },
+  "timestamp": "2026-03-30T21:24:23.671783",
+  "execution_mode": "single_test_resume",
+  "runner": "scripts.run_8_tests.TestSuite.test_8_edge_case_long_input"
+}

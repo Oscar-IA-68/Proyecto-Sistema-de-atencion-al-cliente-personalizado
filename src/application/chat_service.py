@@ -80,6 +80,20 @@ class ChatService(IChatService):
         else:
             intent = str(significant_intents[0]["intent"])
 
+        # Entrada muy corta/ambigua: priorizar fallback conservador a general.
+        word_count = len(user_input.strip().split())
+        ambiguous_short_terms = {"ayuda", "help", "hola", "buenas", "hello", "hi"}
+        normalized_input = user_input.strip().lower()
+        if normalized_input in ambiguous_short_terms:
+            intent = "general"
+            significant_intents = [{"intent": "general", "score": 0.5}]
+
+        if word_count <= 2 and intent != "general":
+            conservative_intent = self.strategy_factory.detect_intent(user_input)
+            if conservative_intent == "general":
+                intent = "general"
+                significant_intents = [{"intent": "general", "score": 0.5}]
+
         if intent == "general":
             self._fallback_to_general_count += 1
         if expected_intent:
