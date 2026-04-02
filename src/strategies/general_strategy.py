@@ -101,13 +101,14 @@ class GeneralStrategy(IChatStrategy):
         """Genera conversación general usando LLM"""
         prompt = f"""El usuario dice: "{user_input}"
 
-Responde de forma amigable y profesional. Si el mensaje parece que necesita un tipo específico de ayuda (soporte, recomendaciones, etc.), sugiere amablemente que especifique su necesidad."""
+Responde de forma amigable y profesional. Si el mensaje parece que necesita un tipo especifico de ayuda (soporte, recomendaciones, etc.), sugiere amablemente que especifique su necesidad.
+{Config.get_response_style_instruction('general')}"""
         
         return self.llm_client.query(
             prompt=prompt,
             system_prompt=Config.get_system_prompt("general"),
             temperature=0.8,
-            max_tokens=300
+            max_tokens=Config.get_response_max_tokens("general")
         )
     
     def get_strategy_name(self) -> str:

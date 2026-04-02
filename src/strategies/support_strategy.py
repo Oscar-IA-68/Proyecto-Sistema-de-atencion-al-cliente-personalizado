@@ -51,14 +51,15 @@ class SupportStrategy(IChatStrategy):
 "{user_input}"
 {customer_context}
 
-Proporciona una solución clara y paso a paso. Si necesitas más información, pregúntala de forma específica."""
+Proporciona una solucion clara y paso a paso. Si necesitas mas informacion, preguntala de forma especifica.
+{Config.get_response_style_instruction('support')}"""
         
         # Generar respuesta usando LLM
         response_text = self.llm_client.query(
             prompt=prompt,
             system_prompt=Config.get_system_prompt("support"),
             temperature=0.7,
-            max_tokens=500
+            max_tokens=Config.get_response_max_tokens("support")
         )
         
         # Crear ticket si el problema parece serio

@@ -62,14 +62,15 @@ Responde con:
 3. Solución concreta o pasos siguientes
 4. Compensación si la gravedad es alta (descuento, envío gratis, etc.)
 
-Mantén un tono profesional y comprensivo."""
+Manten un tono profesional y comprensivo.
+{Config.get_response_style_instruction('complaint')}"""
         
         # Generar respuesta usando LLM
         response_text = self.llm_client.query(
             prompt=prompt,
             system_prompt=Config.get_system_prompt("complaint"),
             temperature=0.6,  # Menor temperatura para respuestas más consistentes
-            max_tokens=500
+            max_tokens=Config.get_response_max_tokens("complaint")
         )
         
         # Crear ticket para la queja

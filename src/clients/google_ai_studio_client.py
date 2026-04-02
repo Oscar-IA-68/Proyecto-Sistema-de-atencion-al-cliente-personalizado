@@ -42,7 +42,7 @@ class GoogleAIStudioClient(ILLMClient):
         prompt: str,
         system_prompt: Optional[str],
         temperature: float,
-        max_tokens: int
+        max_tokens: Optional[int]
     ) -> str:
         """Ejecuta una consulta con reintentos para errores transitorios."""
         max_attempts = 3
@@ -55,14 +55,17 @@ class GoogleAIStudioClient(ILLMClient):
                     full_prompt = f"{system_prompt}\n\n{prompt}"
                 else:
                     full_prompt = prompt
+
+                config_kwargs = {
+                    "temperature": temperature,
+                }
+                if max_tokens is not None:
+                    config_kwargs["max_output_tokens"] = max_tokens
                 
                 response = self.client.models.generate_content(
                     model=self.model,
                     contents=full_prompt,
-                    config=genai.types.GenerateContentConfig(
-                        temperature=temperature,
-                        max_output_tokens=max_tokens
-                    )
+                    config=genai.types.GenerateContentConfig(**config_kwargs)
                 )
                 
                 # Extraer texto de respuesta
@@ -89,7 +92,7 @@ class GoogleAIStudioClient(ILLMClient):
         raise RuntimeError("No se pudo obtener respuesta de Google AI Studio tras varios intentos")
     
     def query(self, prompt: str, system_prompt: Optional[str] = None, 
-              temperature: float = 0.7, max_tokens: int = 500) -> str:
+              temperature: float = 0.7, max_tokens: Optional[int] = None) -> str:
         """
         Realiza una consulta al modelo de lenguaje Google Gemini
         
@@ -97,7 +100,7 @@ class GoogleAIStudioClient(ILLMClient):
             prompt: Texto de entrada del usuario
             system_prompt: Instrucciones del sistema
             temperature: Creatividad de la respuesta (0-1)
-            max_tokens: Longitud máxima de la respuesta
+            max_tokens: Longitud máxima de la respuesta (None = default del proveedor)
             
         Returns:
             Respuesta generada por el modelo
@@ -133,7 +136,7 @@ class GoogleAIStudioClient(ILLMClient):
         # Palabras clave por intención para mejor clasificación
         intent_keywords = {
             "support": ["error", "problema", "no funciona", "broken", "crash", "fallo", "urgente", "crítico", "grave"],
-            "recommendation": ["recomendación", "sugerencia", "qué compro", "busco", "quiero", "necesito", "laptop", "producto"],
+            "recommendation": ["recomendación", "recomiendas", "sugerencia", "qué compro", "busco", "alternativa", "opciones"],
             "complaint": ["queja", "molesto", "insatisfecho", "malo", "terrible", "decepcionado", "fraude"],
             "faq": ["cómo", "qué es", "cuál", "dónde", "cuándo", "por qué", "política", "procedimiento"],
         }
@@ -153,7 +156,7 @@ Clasifica el mensaje en UNA de estas intenciones. Responde SOLO con el nombre de
                 prompt=prompt,
                 system_prompt=Config.SYSTEM_PROMPTS["intent_detection"],
                 temperature=0.3,  # Baja temperatura para clasificación consistente
-                max_tokens=50
+                max_tokens=Config.INTENT_CLASSIFICATION_MAX_TOKENS
             ).lower().strip()
             
             # 1. Búsqueda exacta
@@ -204,7 +207,7 @@ Clasifica el mensaje en UNA de estas intenciones. Responde SOLO con el nombre de
             ],
             "recommendation": [
                 "recomendación", "recomiendas", "sugerencia", "qué compro", "busco",
-                "quiero", "necesito", "laptop", "producto", "alternativa"
+                "alternativa", "opciones"
             ],
             "complaint": [
                 "queja", "molesto", "insatisfecho", "malo", "terrible", "decepcionado", "fraude"

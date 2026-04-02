@@ -54,7 +54,7 @@ class ILLMClient(ABC):
     
     @abstractmethod
     def query(self, prompt: str, system_prompt: Optional[str] = None, 
-              temperature: float = 0.7, max_tokens: int = 500) -> str:
+              temperature: float = 0.7, max_tokens: Optional[int] = None) -> str:
         """
         Realiza una consulta al modelo de lenguaje
         
@@ -62,7 +62,7 @@ class ILLMClient(ABC):
             prompt: Texto de entrada del usuario
             system_prompt: Instrucciones del sistema
             temperature: Creatividad de la respuesta (0-1)
-            max_tokens: Longitud máxima de la respuesta
+            max_tokens: Longitud máxima de la respuesta (None = default del proveedor)
             
         Returns:
             Respuesta generada por el modelo

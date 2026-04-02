@@ -59,14 +59,15 @@ Catálogo de productos disponibles:
 {products_info}
 
 Recomienda los productos más adecuados según sus necesidades. Explica por qué cada producto es una buena opción.
-Si necesitas más información sobre su presupuesto o uso específico, pregúntale."""
+Si necesitas mas informacion sobre su presupuesto o uso especifico, preguntale.
+{Config.get_response_style_instruction('recommendation')}"""
         
         # Generar recomendación usando LLM
         response_text = self.llm_client.query(
             prompt=prompt,
             system_prompt=Config.get_system_prompt("recommendation"),
             temperature=0.7,
-            max_tokens=500
+            max_tokens=Config.get_response_max_tokens("recommendation")
         )
         
         # Extraer productos mencionados para metadata

@@ -119,6 +119,40 @@ OPENAI_API_KEY=tu-api-key-aqui
 LLM_PROVIDER=openai
 ```
 
+### Configuracion de limites de tokens (recomendado)
+
+El sistema ya no fuerza limites hardcodeados por estrategia. Puedes definirlos por entorno segun tu plan y proveedor.
+
+- Si NO defines limites, la aplicacion deja que el proveedor use su comportamiento por defecto.
+- Si defines limites, se aplican sin necesidad de cambiar codigo.
+
+Variables disponibles:
+
+```env
+# Compatibilidad por proveedor
+OPENAI_MAX_TOKENS=
+GOOGLE_MAX_TOKENS=
+
+# Limite global para respuestas del bot
+DEFAULT_RESPONSE_MAX_TOKENS=
+
+# Limites por tipo de estrategia (prioridad sobre el global)
+SUPPORT_MAX_TOKENS=
+RECOMMENDATION_MAX_TOKENS=
+COMPLAINT_MAX_TOKENS=
+FAQ_MAX_TOKENS=
+GENERAL_MAX_TOKENS=
+
+# Limite para clasificacion de intencion (recomendado mantener bajo)
+INTENT_CLASSIFICATION_MAX_TOKENS=50
+```
+
+Orden de prioridad para respuestas:
+1. Limite por estrategia (`*_MAX_TOKENS`)
+2. Limite global (`DEFAULT_RESPONSE_MAX_TOKENS`)
+3. Limite por proveedor (`OPENAI_MAX_TOKENS` o `GOOGLE_MAX_TOKENS`)
+4. Sin limite explicito de la app (usa default del proveedor)
+
 `LLM_PROVIDER` define qué cliente se inicializa en runtime:
 
 - `openai`: usa `OpenAIClient` (requiere `OPENAI_API_KEY`)

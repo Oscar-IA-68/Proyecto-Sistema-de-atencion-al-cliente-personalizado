@@ -4,7 +4,7 @@ Cliente OpenAI - Implementa ILLMClient
 
 import random
 import time
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Any
 from openai import OpenAI, APIConnectionError, APITimeoutError, APIStatusError, RateLimitError
 from src.core.interfaces import ILLMClient
 from src.core.config import Config
@@ -39,7 +39,7 @@ class OpenAIClient(ILLMClient):
         self,
         messages: List[Dict[str, str]],
         temperature: float,
-        max_tokens: int
+        max_tokens: Optional[int]
     ) -> str:
         """Ejecuta una consulta con reintentos para errores transitorios."""
         max_attempts = 3
@@ -47,12 +47,15 @@ class OpenAIClient(ILLMClient):
 
         for attempt in range(max_attempts):
             try:
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    temperature=temperature,
-                    max_tokens=max_tokens
-                )
+                request_kwargs: Dict[str, Any] = {
+                    "model": self.model,
+                    "messages": messages,
+                    "temperature": temperature,
+                }
+                if max_tokens is not None:
+                    request_kwargs["max_tokens"] = max_tokens
+
+                response = self.client.chat.completions.create(**request_kwargs)
                 content = response.choices[0].message.content if response.choices else ""
                 return content.strip() if isinstance(content, str) else ""
 
@@ -86,7 +89,7 @@ class OpenAIClient(ILLMClient):
         raise RuntimeError("No se pudo obtener respuesta de OpenAI tras varios intentos")
     
     def query(self, prompt: str, system_prompt: Optional[str] = None, 
-              temperature: float = 0.7, max_tokens: int = 500) -> str:
+              temperature: float = 0.7, max_tokens: Optional[int] = None) -> str:
         """
         Realiza una consulta al modelo de lenguaje OpenAI
         
@@ -94,7 +97,7 @@ class OpenAIClient(ILLMClient):
             prompt: Texto de entrada del usuario
             system_prompt: Instrucciones del sistema
             temperature: Creatividad de la respuesta (0-1)
-            max_tokens: Longitud máxima de la respuesta
+            max_tokens: Longitud máxima de la respuesta (None = default del proveedor)
             
         Returns:
             Respuesta generada por el modelo
@@ -145,7 +148,7 @@ Clasifica el mensaje en UNA de estas intenciones. Responde SOLO con el nombre de
                 prompt=prompt,
                 system_prompt=Config.SYSTEM_PROMPTS["intent_detection"],
                 temperature=0.3,  # Baja temperatura para clasificación consistente
-                max_tokens=50
+                max_tokens=Config.INTENT_CLASSIFICATION_MAX_TOKENS
             ).lower().strip()
             
             # Encuentra la intención más similar de las disponibles
@@ -172,7 +175,7 @@ class MockLLMClient(ILLMClient):
     """
     
     def query(self, prompt: str, system_prompt: Optional[str] = None, 
-              temperature: float = 0.7, max_tokens: int = 500) -> str:
+              temperature: float = 0.7, max_tokens: Optional[int] = None) -> str:
         """Simula una respuesta del LLM"""
         return (
             f"[MODO SIMULACIÓN] He recibido tu mensaje. "

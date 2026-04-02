@@ -106,16 +106,17 @@ class FAQStrategy(IChatStrategy):
         
         prompt = f"""Pregunta del usuario: "{question}"
 
-Información disponible en nuestra base de conocimiento:
+Informacion disponible en nuestra base de conocimiento:
 {faq_context}
 
-Responde la pregunta de forma clara. Si la información exacta no está disponible, indica cómo el usuario puede obtenerla (contactar soporte, revisar la sección X, etc.)."""
+Responde la pregunta de forma clara. Si la informacion exacta no esta disponible, indica como el usuario puede obtenerla (contactar soporte, revisar la seccion X, etc.).
+{Config.get_response_style_instruction('faq')}"""
         
         return self.llm_client.query(
             prompt=prompt,
             system_prompt=Config.get_system_prompt("faq"),
             temperature=0.5,  # Baja temperatura para respuestas consistentes
-            max_tokens=400
+            max_tokens=Config.get_response_max_tokens("faq")
         )
     
     def get_strategy_name(self) -> str:
