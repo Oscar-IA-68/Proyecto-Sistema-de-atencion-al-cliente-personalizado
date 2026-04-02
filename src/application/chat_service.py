@@ -103,11 +103,7 @@ class ChatService(IChatService):
 
         max_strategies = max(1, Config.MULTI_INTENT_MAX_STRATEGIES)
         selected_intents = significant_intents[:max_strategies]
-        use_multi_intent = (
-            Config.MULTI_INTENT_ENABLED
-            and len(selected_intents) > 1
-            and any(item.get("intent") != "general" for item in selected_intents)
-        )
+        use_multi_intent = self._should_use_multi_intent(user_input, selected_intents)
         
         # Crear contexto de conversación
         context = ChatContext(
@@ -152,11 +148,65 @@ class ChatService(IChatService):
         # Actualizar historial
         self._add_to_history(user_input, response.message)
         
-        print(f"🤖 Asistente: {response.message[:100]}{'...' if len(response.message) > 100 else ''}")
         elapsed_ms = (time.perf_counter() - started_at) * 1000
         self._response_times_ms.append(elapsed_ms)
         
         return response
+
+    def _should_use_multi_intent(self, user_input: str, selected_intents: List[Dict[str, object]]) -> bool:
+        """Activa P3 solo cuando el mensaje muestra dos temas claros y distintos."""
+        if not Config.MULTI_INTENT_ENABLED:
+            return False
+
+        if len(selected_intents) <= 1:
+            return False
+
+        intents = [str(item.get("intent", "general")).strip().lower() for item in selected_intents]
+        if all(intent == "general" for intent in intents):
+            return False
+
+        user_input_lower = user_input.lower()
+        explicit_multi_signals = [
+            "además",
+            "también",
+            "y además",
+            "por cierto",
+            "aparte",
+            "al mismo tiempo",
+            "por un lado",
+            "por otro lado",
+        ]
+
+        recommendation_signals = [
+            "recomienda",
+            "recomiendas",
+            "recomendación",
+            "sugerencia",
+            "qué compro",
+            "que compro",
+            "alternativa",
+            "opciones",
+        ]
+
+        explicit_multi = any(signal in user_input_lower for signal in explicit_multi_signals)
+        explicit_recommendation = any(signal in user_input_lower for signal in recommendation_signals)
+
+        if "recommendation" in intents and not explicit_recommendation:
+            return False
+
+        if not explicit_multi and not explicit_recommendation:
+            return False
+
+        top_score = float(selected_intents[0].get("score", 0.0))
+        second_score = float(selected_intents[1].get("score", 0.0))
+
+        if second_score < Config.MULTI_INTENT_THRESHOLD:
+            return False
+
+        if second_score < max(0.75, top_score - 0.15):
+            return False
+
+        return True
     
     def get_conversation_history(self) -> List[Dict[str, str]]:
         """

@@ -204,6 +204,23 @@ class TestChatService:
         assert response.metadata.get("multi_intent") is True
         assert len(response.metadata.get("intents_detected", [])) >= 2
 
+    def test_support_with_product_mention_does_not_force_multi_intent(self, monkeypatch):
+        """Evita que una mención de producto dispare recomendación sin señal explícita."""
+        monkeypatch.setattr(Config, "MULTI_INTENT_ENABLED", True)
+        monkeypatch.setattr(Config, "MULTI_INTENT_THRESHOLD", 0.6)
+        monkeypatch.setattr(Config, "MULTI_INTENT_MAX_STRATEGIES", 2)
+
+        llm_client = MultiIntentMockLLMClient()
+        database = DatabaseSimulator()
+        factory = StrategyFactory(llm_client, database)
+        service = ChatService(factory)
+
+        response = service.process_message("Tengo una laptop nueva y no enciende")
+
+        assert response.intent == "support"
+        assert response.metadata.get("multi_intent") is False
+        assert response.metadata.get("intents_detected") == ["support"]
+
     def test_short_ambiguous_input_stays_general_with_p3(self, monkeypatch):
         """Evita regresión: entrada corta ambigua no debe sobre-clasificarse."""
         monkeypatch.setattr(Config, "MULTI_INTENT_ENABLED", True)
