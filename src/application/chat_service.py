@@ -15,6 +15,11 @@ from src.application.multi_intent_processor import MultiIntentProcessor
 class ChatService(IChatService):
     """
     Servicio principal de chat
+
+    Descripcion:
+
+    - Orquesta el flujo de conversación: recibe mensajes, detecta intención, selecciona estrategia, genera respuesta y mantiene historial.
+    - Implementa mejoras iterativas: manejo de mensajes cortos/ambiguos, modo multi-intención, trazabilidad de clasificación, métricas de rendimiento y precisión.
     
     Cumple con:
     - SRP: Solo orquesta, no implementa lógica de negocio
