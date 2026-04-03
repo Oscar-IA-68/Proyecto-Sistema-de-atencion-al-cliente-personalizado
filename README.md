@@ -284,6 +284,22 @@ Notas de interpretación:
 streamlit run app.py
 ```
 
+Si no tienes activado el entorno virtual, puedes ejecutarlo así:
+
+```bash
+c:/Users/yuvlo/OneDrive/Documentos/Codigo_carrera/Inteligencia_artificial/archivos_github/Proyecto-Sistema-de-atencion-al-cliente-personalizado/.venv/Scripts/python.exe -m streamlit run app.py
+```
+
+> **Importante**: No ejecutes la interfaz web con `python app.py`.
+> Debe iniciarse con `streamlit run app.py` (o `python -m streamlit run app.py`).
+> Si usas `python app.py`, verás advertencias como `missing ScriptRunContext`, porque Streamlit entra en "bare mode".
+
+Si necesitas otro puerto:
+
+```bash
+streamlit run app.py --server.port 8511
+```
+
 Esto abrirá automáticamente tu navegador en `http://localhost:8501`
 
 **Características de la interfaz web:**
